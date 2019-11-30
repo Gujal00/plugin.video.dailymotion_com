@@ -347,7 +347,14 @@ def getStreamUrl(vid,live=False):
                     if not live:
 
                         if source == "auto" :
-                            continue
+                            mb = requests.get(m_url,headers=headers).text
+                            mb = re.findall('NAME="([^"]+)",PROGRESSIVE-URI="([^"]+)"',mb)
+                            mb = sorted(mb,key=s,reverse=True)
+                            for quality, strurl in mb:
+                                if int(quality) <= int(maxVideoQuality):
+                                    strurl += '|{}'.format(urllib.parse.urlencode(headers))
+                                    #xbmc.log(str(strurl),xbmc.LOGDEBUG)
+                                    return strurl
 
                         elif  int(source) <= int(maxVideoQuality) :
                             if 'video' in item.get('type',None):
