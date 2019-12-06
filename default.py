@@ -494,6 +494,7 @@ def favourites(param):
     mode = param[param.find("###MODE###=")+11:]
     mode = mode[:mode.find("###")]
     channelEntry = param[param.find("###USER###="):]
+    user = param[11 + param.find("###USER###="):param.find("###THUMB###")]
     if mode == "ADD":
         if xbmcvfs.exists(channelFavsFile):            
             with open(channelFavsFile, 'r') as fh:
@@ -505,7 +506,7 @@ def favourites(param):
             with open(channelFavsFile, 'a') as fh:
                 fh.write(channelEntry+"\n")
             fh.close()
-        xbmc.executebuiltin('XBMC.Notification(Info:,'+translation(30030)+'!,5000)')
+        xbmc.executebuiltin('XBMC.Notification(Info: ,'+ user.encode('utf-8') + ' ' + translation(30030) + '!,5000)')
     elif mode == "REMOVE":
         refresh = param[param.find("###REFRESH###=")+14:]
         refresh = refresh[:refresh.find("###USER###=")]
