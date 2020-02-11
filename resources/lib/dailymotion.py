@@ -400,7 +400,7 @@ def getStreamUrl(vid, live=False):
                                 quality = quality.split("@")[0]
                                 if int(quality) <= int(maxVideoQuality):
                                     strurl = strurl.split('#cell')[0] + '|{}'.format(urllib.parse.urlencode(headers))
-                                    xbmc.log(str(strurl), xbmc.LOGDEBUG)
+                                    xbmc.log('Selected URL is: {}'.format(strurl), xbmc.LOGDEBUG)
                                     return strurl
 
                         elif int(source) <= int(maxVideoQuality):
@@ -413,17 +413,16 @@ def getStreamUrl(vid, live=False):
                             m_url = m_url.split('?sec=')
                             the_url = m_url[0] + '?redirect=0&sec=' + urllib.parse.quote(m_url[1])
                             rr = requests.get(the_url, cookies=r.cookies.get_dict(), headers=headers)
-                            mburl = re.findall('(http.+)', rr.text)[0].split('#cell')[0]
-                            mb = requests.get(mburl, headers=headers).text
-                            mb = re.findall('NAME="([^"]+)"\n(.+)', mb)
+                            mb = re.findall('NAME="([^"]+)"\n(.+)', rr.text)
                             mb = sorted(mb, key=s, reverse=True)
                             for quality, strurl in mb:
                                 quality = quality.split("@")[0]
                                 if int(quality) <= int(maxVideoQuality):
                                     if not strurl.startswith('http'):
-                                        strurl1 = re.findall('(.+/)', mburl)[0]
+                                        strurl1 = re.findall('(.+/)', the_url)[0]
                                         strurl = strurl1 + strurl
-                                    strurl += '|{}'.format(urllib.parse.urlencode(headers))
+                                    strurl = strurl.split('#cell')[0] + '|{}'.format(urllib.parse.urlencode(headers))
+                                    xbmc.log('Selected URL is: {}'.format(strurl), xbmc.LOGDEBUG)
                                     return strurl
                     if type(m_url) is list:
                         m_url = '?sec='.join(m_url)
@@ -780,8 +779,6 @@ elif mode == 'addFav':
     addFav()
 elif mode == 'personalMain':
     personalMain()
-# elif mode == 'listPersonalUsers':
-#     listPersonalUsers()
 elif mode == 'favouriteUsers':
     favouriteUsers()
 elif mode == 'listUserPlaylists':
